@@ -198,6 +198,8 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: ${{ inputs.image }}
+          flavor: |
+            latest=false
           tags: |
             type=semver,pattern={{version}},suffix=-amd64${{ inputs.tag-suffix }}
             type=ref,event=pr,suffix=-amd64${{ inputs.tag-suffix }}
@@ -265,6 +267,8 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: ${{ inputs.image }}
+          flavor: |
+            latest=false
           tags: |
             type=semver,pattern={{version}},suffix=-arm64${{ inputs.tag-suffix }}
             type=ref,event=pr,suffix=-arm64${{ inputs.tag-suffix }}
@@ -318,6 +322,8 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: ${{ inputs.image }}
+          flavor: |
+            latest=false
           tags: |
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
@@ -383,6 +389,8 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: ${{ inputs.image }}
+          flavor: |
+            latest=false
           tags: |
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
