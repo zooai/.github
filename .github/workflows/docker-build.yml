@@ -218,7 +218,9 @@ jobs:
           cache-from: type=gha,scope=${{ inputs.image }}-amd64
           cache-to: type=gha,scope=${{ inputs.image }}-amd64,mode=max
           provenance: false
-          push: ${{ inputs.push }}
+          # Push only when we have a semver tag (or PR) to attach;
+          # branch builds verify the Dockerfile but never publish floating tags.
+          push: ${{ inputs.push && (startsWith(github.ref, 'refs/tags/') || github.event_name == 'pull_request') }}
 
   # ── arm64 (ARC — GKE T2A Ampere native, hanzo-build-linux-arm64) ───
   build-arm64:
@@ -287,11 +289,11 @@ jobs:
           cache-from: type=gha,scope=${{ inputs.image }}-arm64
           cache-to: type=gha,scope=${{ inputs.image }}-arm64,mode=max
           provenance: false
-          push: ${{ inputs.push }}
+          push: ${{ inputs.push && (startsWith(github.ref, 'refs/tags/') || github.event_name == 'pull_request') }}
 
   # ── Multi-platform manifest (both platforms) ─────────────────
   create-manifest:
-    if: inputs.push && contains(inputs.platforms, 'linux/amd64') && contains(inputs.platforms, 'linux/arm64')
+    if: inputs.push && contains(inputs.platforms, 'linux/amd64') && contains(inputs.platforms, 'linux/arm64') && (startsWith(github.ref, 'refs/tags/') || github.event_name == 'pull_request')
     runs-on: ${{ inputs.runner-amd64 }}
     needs: [build-amd64, build-arm64]
     permissions:
@@ -357,6 +359,7 @@ jobs:
     if: >-
       always() &&
       inputs.push &&
+      (startsWith(github.ref, 'refs/tags/') || github.event_name == 'pull_request') &&
       !(contains(inputs.platforms, 'linux/amd64') && contains(inputs.platforms, 'linux/arm64')) &&
       (needs.build-amd64.result == 'success' || needs.build-arm64.result == 'success') &&
       !(needs.build-amd64.result == 'failure' || needs.build-arm64.result == 'failure') &&
