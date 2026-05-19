@@ -203,6 +203,7 @@ jobs:
           tags: |
             type=semver,pattern={{version}},suffix=-amd64${{ inputs.tag-suffix }}
             type=ref,event=pr,suffix=-amd64${{ inputs.tag-suffix }}
+            type=sha,format=short,prefix=sha-,suffix=-amd64${{ inputs.tag-suffix }},enable=${{ github.event_name == 'push' }}
 
       - name: Build and push
         id: build
@@ -274,6 +275,7 @@ jobs:
           tags: |
             type=semver,pattern={{version}},suffix=-arm64${{ inputs.tag-suffix }}
             type=ref,event=pr,suffix=-arm64${{ inputs.tag-suffix }}
+            type=sha,format=short,prefix=sha-,suffix=-arm64${{ inputs.tag-suffix }},enable=${{ github.event_name == 'push' }}
 
       - name: Build and push
         id: build
